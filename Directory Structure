@@ -1,0 +1,26 @@
+DevOps-EKS-Pipeline/
+├── README.md                   # Project documentation
+├── terraform/                  # Infrastructure-as-Code using Terraform
+│   ├── main.tf                 # Main Terraform configuration file
+│   ├── variables.tf            # Variable definitions
+│   ├── outputs.tf              # Output variables for VPC and EKS cluster details
+│   └── eks/
+│       ├── vpc.tf              # VPC configuration (subnets, gateways, etc.)
+│       ├── eks-cluster.tf      # EKS cluster configuration
+│       └── node-group.tf       # EKS node group configuration
+├── kubernetes/                 # Kubernetes deployment manifests
+│   ├── deployment.yaml         # Application deployment configuration
+│   ├── service.yaml            # Service configuration for external access
+│   ├── configmap.yaml          # ConfigMap for environment variables and settings
+│   └── secrets.yaml            # Secrets for sensitive information
+├── jenkins/                    # Jenkins CI/CD configuration
+│   ├── Jenkinsfile             # Pipeline definition
+│   └── Dockerfile              # Dockerfile for Jenkins setup (if needed)
+├── monitoring/                 # Monitoring configurations
+│   ├── prometheus-config.yaml  # Prometheus configuration
+│   ├── grafana-config.yaml     # Grafana dashboards and settings
+│   └── alerts.yaml             # Prometheus alerting rules
+└── scripts/                    # Helper scripts
+    ├── build-docker.sh         # Docker image build script
+    ├── scan-security.sh        # Security scan using Trivy
+    └── deploy-to-eks.sh        # Deployment script to EKS
