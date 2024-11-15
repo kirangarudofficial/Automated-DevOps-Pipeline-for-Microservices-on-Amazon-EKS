@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REPO = "my-docker-repo/my-app"  // Replace with your Docker repository
+        DOCKER_CREDENTIALS_ID = "docker-hub-credentials"  // Jenkins credentials ID for Docker
+        KUBECONFIG_CREDENTIALS_ID = "kubeconfig-credentials-id"  // Jenkins credentials ID for kubeconfig
+        K8S_DEPLOYMENT_NAME = "my-application"  // Kubernetes deployment name
+        K8S_NAMESPACE = "default"  // Kubernetes namespace
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code...'
+                checkout scm
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                echo 'Building the application...'
+                sh './mvnw clean install'  // Replace with your build command (e.g., `npm install` if using Node.js)
+            }
+        }
+
+        stage('Test Application') {
+            steps {
+                echo 'Running tests...'
+                sh './mvnw test'  // Replace with your test command
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    dockerImage = docker.build("${DOCKER_REPO}:${env.BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push()
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo 'Deploying to Kubernetes...'
+                script {
+                    kubernetesDeploy(
+                        configs: 'kubernetes/deployment.yaml',
+                        kubeconfigId: KUBECONFIG_CREDENTIALS_ID,
+                        enableConfigSubstitution: true
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}

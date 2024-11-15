@@ -1,0 +1,13 @@
+# configmap.yaml: Stores non-sensitive configuration data
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+  labels:
+    app: my-app
+data:
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_LOG_LEVEL: "info"
+  API_URL: "https://api.example.com"

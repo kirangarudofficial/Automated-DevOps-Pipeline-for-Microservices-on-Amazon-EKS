@@ -1,0 +1,15 @@
+# service.yaml: Exposes the application
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+  labels:
+    app: my-app
+spec:
+  type: LoadBalancer  # You may use ClusterIP if you don’t want external access
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: my-app
